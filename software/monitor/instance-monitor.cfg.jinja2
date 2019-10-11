@@ -6,7 +6,6 @@ parts =
   symlink-re6st-logs
   symlink-collected-logs
   python-symlink
-  monitor-collect-csv-wrapper
   monitor-base
   monitor-check-memory-usage
   monitor-check-cpu-usage
@@ -52,12 +51,6 @@ consumption = ${:log}/consumption
 recipe = plone.recipe.command
 command = ln -sf {{ buildout_bin }}/pythonwitheggs ${monitor-directory:bin}/python
 update-command = ${:command}
-
-[monitor-collect-csv-wrapper]
-recipe = slapos.cookbook:wrapper
-command-line = 
-  ${monitor-directory:bin}/python {{ monitor_collect_csv_dump }} --output_folder ${monitor-directory:consumption}
-wrapper-path = ${monitor-directory:bin}/monitor-collect-csv-dump  
 
 [monitor-check-memory-usage]
 recipe = slapos.cookbook:wrapper
