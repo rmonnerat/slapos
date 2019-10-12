@@ -34,8 +34,11 @@ public = ${directory:monitor}/public
 private = ${directory:monitor}/private
 documents = ${:private}/documents
 log = ${directory:log}/monitor
-promise-result = ${buildout:directory}/.slapgrid/promise/result
-promise-log = ${buildout:directory}/.slapgrid/promise/log
+slapgrid-promise = ${buildout:directory}/.slapgrid/promise
+promise-result = ${:slapgrid-promise}/result
+promise-history = ${:slapgrid-promise}/history
+promise-log = ${:slapgrid-promise}/promise/log
+collect-log = ${buildout:directory}/.slapgrid/monitor
 
 [ca-directory]
 recipe = slapos.cookbook:mkdirectory
@@ -159,7 +162,15 @@ update-command =
 recipe = cns.recipe.symlink
 symlink =
   ${monitor-directory:promise-result} = ${monitor-directory:public}/promise
+  ${monitor-directory:promise-history} = ${monitor-directory:public}/history
   ${monitor-directory:promise-log} = ${monitor-directory:log}/promise
+  ${monitor-directory:collect-log}/monitor_resource_process.data.json  = ${monitor-directory:documents}/monitor_resource_process.data.json
+  ${monitor-directory:collect-log}/monitor_resource_memory.data.json = ${monitor-directory:documents}/monitor_resource_memory.data.json
+  ${monitor-directory:collect-log}/monitor_resource_io.data.json = ${monitor-directory:documents}/monitor_resource_io.data.json 
+  ${monitor-directory:collect-log}/monitor_process_resource.status.json = ${monitor-directory:documents}/monitor_process_resource.status.json 
+  ${monitor-directory:collect-log}/monitor_resource.status.json = ${monitor-directory:documents}/monitor_resource.status.json 
+  ${monitor-directory:slapgrid-promise}/promise_status.json = ${monitor-directory:private}/_promise_status
+  ${monitor-directory:slapgrid-promise}/promise_stats.json = ${monitor-directory:documents}/monitor_state.data.json
 
 [monitor-httpd-conf-parameter]
 listening-ip = ${monitor-instance-parameter:monitor-httpd-ipv6}
@@ -239,14 +250,6 @@ command-line = ${xnice-bin:output} {{ monitor_configwrite }}
               --monitor_https_cors {{ monitor_https_cors }}
 wrapper-path = ${directory:bin}/monitor-configurator
 
-[monitor-collect-wrapper]
-recipe = slapos.cookbook:wrapper
-command-line = ${xnice-bin:output} {{ monitor_collect }}
-               --output_folder ${monitor-directory:documents}
-               --collector_db ${monitor-instance-parameter:collector-db}
-               --pid_file ${monitor-directory:pids}/monitor-collect.pid
-wrapper-path = ${directory:bin}/monitor-collect
-
 [monitor-globalstate-cron-entry]
 recipe = slapos.cookbook:cron.d
 cron-entries = ${cron:cron-entries}
@@ -260,13 +263,6 @@ cron-entries = ${cron:cron-entries}
 name = monitor-configurator
 frequency = * * * * *
 command = {{ bin_directory }}/randomsleep 10 && ${monitor-configurator-wrapper:wrapper-path}
-
-[monitor-collect-cron-entry]
-recipe = slapos.cookbook:cron.d
-cron-entries = ${cron:cron-entries}
-name = monitor_collect
-frequency = * * * * *
-command = {{ bin_directory }}/randomsleep 40 && ${monitor-collect-wrapper:wrapper-path}
 
 [logrotate-entry-monitor-data]
 recipe = collective.recipe.template
@@ -391,7 +387,6 @@ base-url = ${monitor-conf-parameters:base-url}
 depends =
   ${monitor-globalstate-cron-entry:name}
   ${monitor-configurator-cron-entry:name}
-  ${monitor-collect-cron-entry:name}
   ${cron-entry-logrotate:name}
   ${logrotate-entry-cron:name}
   ${certificate-authority-service:wrapper-path}
