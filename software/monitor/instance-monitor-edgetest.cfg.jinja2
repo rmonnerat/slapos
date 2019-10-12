@@ -108,13 +108,6 @@ command = cd ${monitor-directory:crawl-log}/{{ entry }} && ${crawler-bin:wrapper
 
 [monitor-directory]
 crawl-log = ${:srv}/crawlog
-network-user-logs = ${:private}/network-user-logs/
-{% for slave_instance in slave_instance_list -%}
-user-log-{{ slave_instance.get('slave_reference') }}-folder = ${:private}/network-user-logs/{{ slave_instance.get('slave_reference') }}
-user-log-{{ slave_instance.get('slave_reference') }}-ping-folder = ${:private}/network-user-logs/{{ slave_instance.get('slave_reference') }}/ping
-user-log-{{ slave_instance.get('slave_reference') }}-ping6-folder = ${:private}/network-user-logs/{{ slave_instance.get('slave_reference') }}/ping6
-
-{% endfor -%}
 {% for directory in directory_list %}
 {{ '%s = ${:crawl-log}/%s' % (directory, directory) }}
 {% endfor %}
