@@ -26,6 +26,7 @@
 ##############################################################################
 import os
 import hashlib
+import six
 from six.moves import configparser
 import tempfile
 
@@ -108,6 +109,8 @@ class Request(Recipe):
     request_needed = True
 
     name = self.options['name']
+    if six.PY3 and type(name) is str:
+      name = name.encode("utf-8")
     hash_ = hashlib.sha512(name).hexdigest()
     key = os.path.join(self.ca_private, hash_ + self.ca_key_ext)
     certificate = os.path.join(self.ca_certs, hash_ + self.ca_crt_ext)
