@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "description": "Parameters to instantiate Theia",
-  "additionalProperties": false,
+  "unevaluatedProperties": false,
   "properties": {
     "autorun": {
       "title": "Automatically Run Software/Instance",

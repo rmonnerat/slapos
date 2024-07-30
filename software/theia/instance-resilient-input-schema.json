@@ -3,6 +3,11 @@
   "type": "object",
   "description": "Parameters to instantiate resilient Theia",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "$ref": "./instance-input-schema.json#"
+    }
+  ],
   "properties": {
     "resilient-clone-number": {
       "title": "Amount of backup(s) to create",
@@ -55,7 +60,7 @@
       "type": "string",
       "default": "2W",
       "optional": true
-    },
-    "$ref": "./instance-input-schema.json#/properties"
-  }
+    }
+  },
+  "unevaluatedProperties": false
 }
